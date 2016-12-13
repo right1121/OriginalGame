@@ -37,46 +37,20 @@ public class MakeTrainButton : MonoBehaviour {
 		//親オブジェクトの検索
 		buttonPos = GameObject.Find("Content");
 
-
-		while(check) {
-			//プレハブを使用してオブジェクトの作成
-			obj = (GameObject)Instantiate (trainButtonPrefab);
-			//プレハブをContentの子オブジェクトに移動
-			obj.transform.SetParent(buttonPos.transform, false);
-
-			//路線名で駅名を変更
-			switch (ButtonSet.getRouteName()) {
-				case "1":useDestination = destination_1;
-					break;
-				case "2":useDestination = destination_2;
-					break;
-				case "3":useDestination = destination_3;
-					break;
-				default:
-					break;
-			}
-
-			//列車ごとに情報を変更
-			switch (i){
-				case 0: setTrainDate(obj, "普通", new Color32(255,255,255,255), useDestination[i], trainTime.ToString("HH:mm") , 6 , "101");
-					break;
-				case 1: trainTime = trainTime.AddMinutes(15);
-						setTrainDate(obj, "普通", new Color32(255,255,255,255), "南浦和", trainTime.ToString("HH:mm") , 6 , "103");
-					break;
-				case 2: trainTime = trainTime.AddMinutes(15);
-						setTrainDate(obj, "普通", new Color32(255,255,255,255), "蒲田", trainTime.ToString("HH:mm") , 6 , "105");
-					break;
-				case 3: trainTime = trainTime.AddMinutes(15);
-						setTrainDate(obj, "普通", new Color32(255,255,255,255), "桜木町", trainTime.ToString("HH:mm") , 6 , "107");
-					break;
-			default:
-				check = false;
-				Destroy (obj);
+		//路線名で設定を変更
+		switch (ButtonSet.getRouteName()) {
+			case "1":useDestination = destination_1;
 				break;
-			}
-			i++;
-			continue;
+			case "2":useDestination = destination_2;
+				break;
+			case "3":useDestination = destination_3;
+				break;
+			default:
+				break;
 		}
+
+		setStationParameter(ButtonSet.getRouteName()) ;
+
 
 	}
 	
@@ -85,8 +59,17 @@ public class MakeTrainButton : MonoBehaviour {
 	
 	}
 
+	//ボタンの項目設定
 	//オブジェクト　ラインカラー　路線名　路線特徴　路線詳細
-	void setTrainDate (GameObject obj,string trainType,  Color32 lineColor, string destination, string time, int cars, string trainNunber) {
+	void setTrainDate (string trainType,  Color32 lineColor, string destination, string time, int cars, string trainNunber) {
+
+
+		//プレハブを使用してオブジェクトの作成
+		obj = (GameObject)Instantiate (trainButtonPrefab);
+		//プレハブをContentの子オブジェクトに移動
+		obj.transform.SetParent(buttonPos.transform, false);
+
+
 		obj.transform.FindChild("TypeImage").FindChild("Type").GetComponent<Text>().text = trainType;					//種別
 		obj.transform.FindChild("TypeImage").GetComponent<Image>().color = lineColor;			//色
 		obj.transform.FindChild("Destination").GetComponent<Text>().text = destination;			//行先
@@ -95,20 +78,100 @@ public class MakeTrainButton : MonoBehaviour {
 		obj.name = trainNunber;		//オブジェクトの名前変更
 	}
 
+	//時刻表
 	void setStationParameter(string routeName) {
 		switch(routeName) {
 			case "1":
-				
+					setTrainDate(trainType[0], getTrainTypeColor(0) , useDestination[0], trainTime.ToString("HH:mm") , 6 , "101");
+					trainTime = trainTime.AddMinutes(15);
+
+					setTrainDate(trainType[0], getTrainTypeColor(0) , useDestination[1], trainTime.ToString("HH:mm") , 6 , "103");
+					trainTime = trainTime.AddMinutes(15);
+
+					setTrainDate(trainType[0], getTrainTypeColor(0) , useDestination[2], trainTime.ToString("HH:mm") , 6 , "105");
+					trainTime = trainTime.AddMinutes(15);
+
+					setTrainDate(trainType[0], getTrainTypeColor(0) , useDestination[3], trainTime.ToString("HH:mm") , 6 , "107");
 				break;
 
 			case "2":
+					setTrainDate(trainType[6], getTrainTypeColor(6) , useDestination[0], trainTime.ToString("HH:mm") , 10 , "201");
+					trainTime = trainTime.AddMinutes(1);
+
+					setTrainDate(trainType[1], getTrainTypeColor(1) , useDestination[0], trainTime.ToString("HH:mm") , 8 , "203");
+					trainTime = trainTime.AddMinutes(4);
+
+					setTrainDate(trainType[4], getTrainTypeColor(4) , useDestination[0], trainTime.ToString("HH:mm") , 8 , "205");
+					trainTime = trainTime.AddMinutes(3);
+
+					setTrainDate(trainType[1], getTrainTypeColor(1) , useDestination[1], trainTime.ToString("HH:mm") , 8 , "207");
+					trainTime = trainTime.AddMinutes(2);
+					
+					setTrainDate(trainType[1], getTrainTypeColor(1) , useDestination[0], trainTime.ToString("HH:mm") , 8 , "207");
 
 				break;
 
 			case "3":
+					trainTime = trainTime.AddMinutes(2);
+
+					setTrainDate(trainType[7], getTrainTypeColor(7) , useDestination[2], trainTime.ToString("HH:mm") , 8 , "301");
+					trainTime = trainTime.AddMinutes(5);
+
+					setTrainDate(trainType[2], getTrainTypeColor(2) , useDestination[0], trainTime.ToString("HH:mm") , 12 , "303");
+					trainTime = trainTime.AddMinutes(2);
+
+					setTrainDate(trainType[0], getTrainTypeColor(0) , useDestination[3], trainTime.ToString("HH:mm") , 4 , "305");
+					trainTime = trainTime.AddMinutes(3);
+
+					setTrainDate(trainType[7], getTrainTypeColor(7) , useDestination[2], trainTime.ToString("HH:mm") , 8 , "307");
+					trainTime = trainTime.AddMinutes(2);
+
+					setTrainDate(trainType[0], getTrainTypeColor(0) , useDestination[4], trainTime.ToString("HH:mm") , 4 , "309");
+					trainTime = trainTime.AddMinutes(3);
+
+					setTrainDate(trainType[7], getTrainTypeColor(7) , useDestination[0], trainTime.ToString("HH:mm") , 6 , "311");
+					trainTime = trainTime.AddMinutes(2);
+
+					setTrainDate(trainType[0], getTrainTypeColor(0) , useDestination[1], trainTime.ToString("HH:mm") , 8 , "313");
+					trainTime = trainTime.AddMinutes(3);
+
+					setTrainDate(trainType[7], getTrainTypeColor(7) , useDestination[2], trainTime.ToString("HH:mm") , 6 , "315");
+					trainTime = trainTime.AddMinutes(5);
+
+					setTrainDate(trainType[2], getTrainTypeColor(2) , useDestination[0], trainTime.ToString("HH:mm") , 8 , "317");
+					trainTime = trainTime.AddMinutes(2);
+
+					setTrainDate(trainType[0], getTrainTypeColor(0) , useDestination[1], trainTime.ToString("HH:mm") , 12 , "319");
 
 				break;
 
 		}
+	}
+
+	
+	Color32 getTrainTypeColor(int trainType) {	//種別ごとの色設定
+		Color32 trainTypeColor = new Color32(255, 255, 255, 255);
+
+		switch(trainType.ToString()) {
+			case "0":	
+			case "1":	trainTypeColor = new Color32(255, 255, 255, 255);
+				break;
+			case "2":	trainTypeColor = new Color32(0, 234, 255, 255);
+				break;
+			case "3":	trainTypeColor = new Color32(0, 152, 0, 255);
+				break;
+			case "4":	trainTypeColor = new Color32(238, 25, 25, 255);
+				break;
+			case "5":	trainTypeColor = new Color32(250, 0, 255, 255);
+				break;
+			case "6":	trainTypeColor = new Color32(255, 142, 0, 255);
+				break;
+			case "7":	trainTypeColor = new Color32(158, 184, 0, 255);
+				break;
+			default:	trainTypeColor = new Color32(255, 255, 255, 255);
+				break;
+		}
+		Debug.Log(trainType.ToString());
+		return trainTypeColor;
 	}
 }

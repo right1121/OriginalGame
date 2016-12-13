@@ -22,7 +22,7 @@ public class BogieAdjustment : MonoBehaviour {
 	void Update () {
 	
 	}
-	void OnTrigerEnter(Collider other) {
+	void OnTrigerStay(Collider other) {
 			obj.angularVelocity = curveRotation;
 			Debug.Log("a");
 	}

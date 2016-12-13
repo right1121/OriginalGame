@@ -1,13 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent (typeof(MeshRenderer))]
+[RequireComponent (typeof(MeshFilter))]
+
 public class CreateMap : MonoBehaviour {
 	//レール
 	public GameObject RailPrefab;
 	//レール位置・角度
 	private Transform railPos = null;
 	//レールの間隔
-	private float railInterval = 0.6f;
+	public float railInterval = 0.6f;
 
 	//円の中心
 	private Vector3 circlePos = Vector3.zero;
@@ -19,39 +22,61 @@ public class CreateMap : MonoBehaviour {
 	private float roundX = 0, roundY = 0, roundZ = 0;
 	
 	//曲線半径
-	private float r = 0;
+	public float curve = 0;
+
+	//距離
+	public float distance;
+
+	//メッシュ
+	Mesh mesh;
 
 	// Use this for initialization
 	void Start () {
 
-		for (int i = 0; i < 1000; i++) {
+		GameObject emptyGameObject = new GameObject("rail_r" + curve + "_" + distance * railInterval + "m");
+
+		for (int i = 0; i < distance; i++) {
 
 			//座標
-			transform.Translate(x, y, railInterval);
+			this.transform.Translate(x, y, railInterval);
 
-			//カーブ区間
-				if (i > 100 && i < 200){
-					r = 100;
-				}else if (i > 220 && i < 400) {
-					r = -100;
-				} else { 
-					r = 0;
-				}
+			//カーブの処理
+			if (curve != 0) {
+				roundY = 360 * railInterval / (2 * Mathf.PI * curve);
+			}else {
+				roundY = 0;
+			}
 
-					if (r != 0) {
-						roundY = 360 * railInterval / (2 * Mathf.PI * r);
-						Debug.Log(roundY);
-					}else {
-						roundY = 0;
-					}
-				//回転
-				transform.Rotate(roundX, roundY, roundZ);
+			//回転
+			transform.Rotate(roundX, roundY, roundZ);
 
 			//Prefabの配置
 			GameObject Rail = Instantiate (RailPrefab) as GameObject;
 			Rail.transform.position = transform.position;
 			Rail.transform.eulerAngles = transform.eulerAngles;
-			
+			Rail.name = i.ToString();
+
+			//メッシュの作成
+			mesh = new Mesh();
+			mesh.vertices = new Vector3[] {
+				new Vector3 (-1, 0.2f , 0),
+				new Vector3 (-1, 0.2f , 1),
+				new Vector3 ( 1, 0.2f , 1),
+				new Vector3 ( 1, 0.2f , 0)
+			};
+			mesh.triangles = new int[] {
+				0, 1, 2,
+				0, 2, 3
+			};
+			mesh.RecalculateNormals();
+			mesh.RecalculateBounds();
+
+			Rail.GetComponent<MeshFilter>().sharedMesh = mesh;
+			Rail.GetComponent<MeshCollider>().sharedMesh = mesh;
+
+
+			//Prefabをrailと親子関係にする
+			Rail.transform.parent = emptyGameObject.transform;
 		}
 		
 		

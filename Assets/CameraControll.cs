@@ -7,12 +7,11 @@ public class CameraControll : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		offset = GetComponent<Transform>().position - target.position;
+		offset = new Vector3(0, 0, 10);
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		GetComponent<Transform>().position = target.position + offset;
-		transform.LookAt(target);
 	}
 }

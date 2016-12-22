@@ -6,6 +6,7 @@ TagManager:
   tags:
   - GameScene
   - TrainSelect
+  - Wheel
   layers:
   - Default
   - TransparentFX

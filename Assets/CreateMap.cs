@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEditor;
 using System.Collections;
 
 [RequireComponent (typeof(MeshRenderer))]
@@ -27,13 +28,15 @@ public class CreateMap : MonoBehaviour {
 	//距離
 	public float distance;
 
-	//メッシュ
-	Mesh mesh;
+	public GameObject gide;
 
 	// Use this for initialization
 	void Start () {
 
+		
 		GameObject emptyGameObject = new GameObject("rail_r" + curve + "_" + distance * railInterval + "m");
+
+			
 
 		for (int i = 0; i < distance; i++) {
 
@@ -56,27 +59,10 @@ public class CreateMap : MonoBehaviour {
 			Rail.transform.eulerAngles = transform.eulerAngles;
 			Rail.name = i.ToString();
 
-			//メッシュの作成
-			mesh = new Mesh();
-			mesh.vertices = new Vector3[] {
-				new Vector3 (-1, 0.2f , 0),
-				new Vector3 (-1, 0.2f , 1),
-				new Vector3 ( 1, 0.2f , 1),
-				new Vector3 ( 1, 0.2f , 0)
-			};
-			mesh.triangles = new int[] {
-				0, 1, 2,
-				0, 2, 3
-			};
-			mesh.RecalculateNormals();
-			mesh.RecalculateBounds();
-
-			Rail.GetComponent<MeshFilter>().sharedMesh = mesh;
-			Rail.GetComponent<MeshCollider>().sharedMesh = mesh;
-
-
 			//Prefabをrailと親子関係にする
 			Rail.transform.parent = emptyGameObject.transform;
+
+
 		}
 		
 		

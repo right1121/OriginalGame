@@ -4,94 +4,115 @@ using UnityEngine.UI;
 
 public class TrainController : MonoBehaviour {
 
-	//電車のノッチ
-	private Slider notch;
-	//ノッチの上限(ブレーキの上限)
-	private int maxnotch = 8;
-	//ノッチの下限(加速の上限)
-	private int minnotch = -4;
 
-	//速度
-	private float trainSpeed;
+	private Slider notch;	//電車のノッチ
+	private int maxnotch = 8;	//ノッチの上限(ブレーキの上限)
+	private int minnotch = -4;	//ノッチの下限(加速の上限)
 
-	//最高速度
-	private float speedLimit;
+	private string TrainType;	//列車種別
+	private int TrainNumber;	//列車番号
 
+	private float trainSpeed;	//速度
 
-	//車輪
-	public WheelCollider LF;
-	public WheelCollider RF;
-	public WheelCollider LR;
-	public WheelCollider RR;
+	private float speedLimit;	//最高速度
 
-	
-
+	//ホイール
+	private Rigidbody[] wheel;		//すべてのホイールのRigidbody
+	public GameObject speedWheel;	//列車速度取得用ホイール
+	private Rigidbody speedWheelRb;	//速度用ホイールのRigidbody
 
 	// Use this for initialization
 	void Start () {
-		//重心
-		this.GetComponent<Rigidbody>().centerOfMass = new Vector3(0, -2, 0);
-		
+
+		this.GetComponent<Rigidbody>().centerOfMass = new Vector3(0, -2, 0);	//重心
+
+		//ホイールの検索
+		if (wheel == null) {
+			wheel = GetComponentsInChildren<Rigidbody>();
+			foreach(Rigidbody rb in wheel) {
+				rb.maxAngularVelocity = 50;
+			}
+		}
+
+		notch = GameObject.Find("masterController").GetComponent<Slider>();
+
+		speedWheelRb = speedWheel.GetComponent<Rigidbody>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
 		//スピード
-		trainSpeed = LF.rpm * 60;
 		GameObject.Find("speed").GetComponent<Text>().text = trainSpeed.ToString();
 
 		//ノッチ数の取得
 		notch = GameObject.Find("masterController").GetComponent<Slider>();
 
 		
+
+	}
+
+	void FixedUpdate() {
+		//速度の計算
+
+		trainSpeed = Mathf.Round( speedWheelRb.angularVelocity.x * 2);
+
+		foreach(Rigidbody rb in wheel) {
+			if(trainSpeed > 0)	rb.AddForce(0, -2 * trainSpeed, 0);
+			}
+
 		//減速
+		if (notch.value == 2) {
+			foreach(Rigidbody rb in wheel) {
+				rb.AddRelativeTorque(-20, 0, 0);
+			}
+			//Debug.Log(notch.value);
+		}
 		if (notch.value == 1) {
-			LF.brakeTorque = 600;
-			RF.brakeTorque = 600;
-			LR.brakeTorque = 600;
-			RR.brakeTorque = 600;
+			foreach(Rigidbody rb in wheel) {
+				rb.AddRelativeTorque(-10, 0, 0);
+			}
 			//Debug.Log(notch.value);
 		}
 
 		//蛇行
 		if (notch.value == 0) {
-			LF.motorTorque = 0;
-			RF.motorTorque = 0;
-			LR.motorTorque = 0;
-			RR.motorTorque = 0;
-			LF.brakeTorque = 0;
-			RF.brakeTorque = 0;
-			LR.brakeTorque = 0;
-			RR.brakeTorque = 0;
+			foreach(Rigidbody rb in wheel) {
+				rb.AddRelativeTorque(0, 0, 0);
+			}
 			//Debug.Log(notch.value);
 		}
 
 		//加速
 		if (notch.value == -1) {
-			//GetComponent<Rigidbody>().AddForce(transform.forward * 100000);
+			foreach(Rigidbody rb in wheel) {
+				rb.AddRelativeTorque(10, 0, 0);
+			}
+			//Debug.Log(notch.value);
 		}else if (notch.value == -2) {
-			LF.motorTorque = 600;
-			RF.motorTorque = 600;
-			LR.motorTorque = 600;
-			RR.motorTorque = 600;
+			foreach(Rigidbody rb in wheel) {
+				rb.AddRelativeTorque(30, 0, 0);
+			}
 			//Debug.Log(notch.value);
 		}else if (notch.value == -3) {
-			LF.motorTorque = 1000;
-			RF.motorTorque = 1000;
-			LR.motorTorque = 1000;
-			RR.motorTorque = 1000;
+			foreach(Rigidbody rb in wheel) {
+				rb.AddRelativeTorque(80, 0, 0);
+			}
 			//Debug.Log(notch.value);
 		}else if (notch.value == -4) {
-			LF.motorTorque = 3000;
-			RF.motorTorque = 3000;
-			LR.motorTorque = 3000;
-			RR.motorTorque = 3000;
+			foreach(Rigidbody rb in wheel) {
+				rb.AddRelativeTorque(100, 0, 0);
+			}
 			//Debug.Log(notch.value);
 		}
 
-		//傾きの制御
 		
-
+		//完全に停止
+		if(notch.value > 0 && speedWheelRb.angularVelocity.x < 0.01) {
+			foreach(Rigidbody rb in wheel) {
+				rb.angularVelocity = Vector3.zero;
+			}
+		}
 	}
+
 }

@@ -171,7 +171,6 @@ public class MakeTrainButton : MonoBehaviour {
 			default:	trainTypeColor = new Color32(255, 255, 255, 255);
 				break;
 		}
-		Debug.Log(trainType.ToString());
 		return trainTypeColor;
 	}
 }
